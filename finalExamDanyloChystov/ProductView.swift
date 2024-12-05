@@ -15,9 +15,9 @@ struct ProductView: View {
                 Text(product.title).font(.title)
                 Text("Product description: \(product.description)").font(.body)
                 Text("Category: \(product.category)")
-                Text("Product Price: \(product.price, specifier: "%.2f")")
+                Text("Product Price: \(product.price, specifier: "%.2f")$")
                 Text("Discount: \(product.discountPercentage)%")
-                Text("Product Discounted Price: \(product.discountedPrice)")
+                Text("Product Discounted Price: \(product.discountedPrice, specifier: "%.2f")")
                 Text("Rating: \(product.rating, specifier: "%.1f")")
                 Text("Available items: \(product.stock)")
             }//end of vstack

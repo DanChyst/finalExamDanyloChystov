@@ -8,10 +8,10 @@
 import Foundation
 
 class ProductViewModel: ObservableObject{
-    @Published var products : [Product]?
-    @Published var filteredProducts : [Product]?
-    @Published var selsectedCategory : String?
-    @Published var errorMsg : String?
+    @Published var products: [Product] = []
+    @Published var filteredProducts: [Product] = []
+    @Published var selectedCategory: String = ""
+    @Published var errorMsg: String?
     
     private let baseUrl = "https://dummyjson.com/"
     private let parameters = "products"
@@ -26,34 +26,29 @@ class ProductViewModel: ObservableObject{
         }
         
         URLSession.shared.dataTask(with: url) { data, _, error in
-            
-            if let error = error{
-                DispatchQueue.main.async{
+            if let error = error {
+                DispatchQueue.main.async {
                     self.errorMsg = error.localizedDescription
                 }
                 return
             }
             
             guard let data = data else {
-                DispatchQueue.main.async{
+                DispatchQueue.main.async {
                     self.errorMsg = "No data received"
                 }
                 return
             }
-
+            
+            print(String(data: data, encoding: .utf8) ?? "Invalid JSON")
             do {
-                
-                if let jsonString = String(data: data, encoding: .utf8) {
-                    print("JSON response:", jsonString)
-                }
-                
-                let productResponce = try JSONDecoder().decode([String: [Product]].self, from: data)
+                let response = try JSONDecoder().decode(ProductResponce.self, from: data)
                 DispatchQueue.main.async {
-                    self.products = productResponce["products"] ?? []
+                    self.products = response.products
                     self.filteredProducts = self.products
                 }
             } catch {
-                DispatchQueue.main.async{
+                DispatchQueue.main.async {
                     self.errorMsg = error.localizedDescription
                 }
             }
@@ -65,7 +60,7 @@ class ProductViewModel: ObservableObject{
         if category.isEmpty{
             filteredProducts = products
         }else{
-            filteredProducts = products!.filter{$0.category.lowercased().contains(category.lowercased())}
+            filteredProducts = products.filter{$0.category.lowercased().contains(category.lowercased())}
         }
     }
 }

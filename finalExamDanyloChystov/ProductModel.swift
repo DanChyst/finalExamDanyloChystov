@@ -7,7 +7,11 @@
 
 import Foundation
 
-struct Product: Identifiable, Codable{
+struct ProductResponce: Codable{
+    let products: [Product]
+}
+
+struct Product: Identifiable, Codable {
     let id: Int
     let title: String
     let description: String
@@ -16,7 +20,8 @@ struct Product: Identifiable, Codable{
     let discountPercentage: Double
     let rating: Double
     let stock: Int
-    var discountedPrice : Double{
-        return price * (1 - discountPercentage/100)
+    
+    var discountedPrice: Double {
+        return price - (price * discountPercentage / 100)
     }
 }
