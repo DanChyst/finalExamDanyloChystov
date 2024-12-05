@@ -8,9 +8,9 @@
 import Foundation
 
 class ProductViewModel: ObservableObject{
-    @Published var products : [Product]
-    @Published var filteredProducts : [Product]
-    @Published var selsectedCategory : String
+    @Published var products : [Product]?
+    @Published var filteredProducts : [Product]?
+    @Published var selsectedCategory : String?
     @Published var errorMsg : String?
     
     private let baseUrl = "https://dummyjson.com/"
@@ -34,8 +34,10 @@ class ProductViewModel: ObservableObject{
                 return
             }
             
-            guard let data = data, error == nil else {
-                print("Network Error:", error ?? " ??? error")
+            guard let data = data else {
+                DispatchQueue.main.async{
+                    self.errorMsg = "No data received"
+                }
                 return
             }
 
@@ -45,14 +47,25 @@ class ProductViewModel: ObservableObject{
                     print("JSON response:", jsonString)
                 }
                 
-                let productResponce = try JSONDecoder().decode(Product.self, from: data)
+                let productResponce = try JSONDecoder().decode([String: [Product]].self, from: data)
                 DispatchQueue.main.async {
-                    
+                    self.products = productResponce["products"] ?? []
+                    self.filteredProducts = self.products
                 }
             } catch {
-                print("decoding Error:", error)
+                DispatchQueue.main.async{
+                    self.errorMsg = error.localizedDescription
+                }
             }
         }.resume()
         
+    }
+    
+    func filteredProducts(by category: String){
+        if category.isEmpty{
+            filteredProducts = products
+        }else{
+            filteredProducts = products!.filter{$0.category.lowercased().contains(category.lowercased())}
+        }
     }
 }

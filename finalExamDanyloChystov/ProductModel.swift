@@ -10,8 +10,8 @@ import Foundation
 struct Product: Identifiable, Codable{
     let id: Int
     let title: String
-    let desscription: String
-    let categoty: String
+    let description: String
+    let category: String
     let price: Double
     let discountPercentage: Double
     let rating: Double
